@@ -1,0 +1,66 @@
+﻿@inherits LayoutComponentBase
+@inject IAuthService AuthService
+
+<MudThemeProvider Theme="Custom" @bind-IsDarkMode="isDarkTheme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar Color="Color.Primary">
+        <MudText>PWA</MudText>
+
+        <AuthorizeView>
+            <Authorized>
+                <MudTooltip Text="Home">
+                    <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Dark" Size="Size.Medium" Href="/" />
+                </MudTooltip>
+                <MudTooltip Text="Add">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Dark" Size="Size.Medium" Href="/AddressForm" />
+                </MudTooltip>
+                <MudTooltip Text="Map">
+                    <MudIconButton Icon="@Icons.Material.Filled.LocationOn" Color="Color.Dark" Size="Size.Medium" />
+                </MudTooltip>
+                <MudTooltip Text="Info">
+                    <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Dark" Size="Size.Medium" Href="/UserInfo"/>
+                </MudTooltip>
+
+                <MudSpacer/>
+                <MudTooltip Text="settings">
+                <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Dark">
+                    <MudMenuItem>@context.User.Identity.Name</MudMenuItem>
+                    <MudMenuItem OnClick="@(async () => await AuthService.Logout())">Logout</MudMenuItem>
+                </MudMenu>
+                </MudTooltip>
+
+                <MudSwitch @bind-Checked="isDarkTheme" Color="Color.Dark" ThumbIcon="@GetThemeIcon()" />
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-2 pt-2">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool isDarkTheme = false;
+
+    string GetThemeIcon() => isDarkTheme ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.WbSunny;
+
+    MudTheme Custom = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Cyan.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.BlueGrey.Darken4,
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.Cyan.Default,
+        }
+    };
+}
+

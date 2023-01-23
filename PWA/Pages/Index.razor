@@ -1,0 +1,65 @@
+﻿@page "/"
+@attribute [Authorize]
+@inject CladiriService service
+@inject ISnackbar Snackbar
+ 
+<PageTitle>Index</PageTitle>
+
+<MudTable Items="@cladiri" Hover="true" LoadingProgressColor="Color.Info" HorizontalScrollbar=true FixedHeader=true>
+    <ToolBarContent>
+        <MudSpacer/><MudSpacer/>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<CladireDto, object>(x=>x.Tip_Strada)">Adresa</MudTableSortLabel></MudTh>
+        <MudTh>Stadiu</MudTh>
+        <MudTh>Imagini</MudTh>
+        <MudTh>Editare</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Adresa">@context.Tip_Strada @context.Denumire_Strada @context.Numar @context.Bloc @context.Scara</MudTd>
+        <MudTd DataLabel="Stadiu">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success"></MudIcon>
+        </MudTd>
+        <MudTd DataLabel="Imagini">
+           <MudIconButton OnClick="@ShowFileUploadComponent" Icon="@Icons.Material.Filled.Image" Color="Color.Primary"></MudIconButton>
+        </MudTd>
+        <MudTd DataLabel="Editare">
+            <MudIconButton Icon="@Icons.Material.Filled.EditNote" Color="Color.Primary"></MudIconButton>
+        </MudTd>
+
+    </RowTemplate>
+</MudTable>
+
+
+@code {
+
+    private string searchString1;
+    List<CladireDto> cladiri;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CustomResponse<List<CladireDto>> response = await service.GetCladiriAsync();
+        if (response.IsSuccessful)
+            cladiri = response.Data;
+    }
+
+    private bool FilterFunc1(CladireDto element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(CladireDto element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Tip_Strada.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Denumire_Strada.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Numar.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true; 
+        if (element.Bloc.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Scara.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

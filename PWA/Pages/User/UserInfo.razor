@@ -1,0 +1,54 @@
+@inject ILocalStorageService localStorageService
+
+@inject IAuthService AuthService
+
+@page "/UserInfo"
+@attribute [Authorize]
+<MudText Style="font-size:x-large; font-weight:700; font-family:'Segoe UI';" Color="Color.Primary" Align="Align.Center">User information</MudText>
+
+<AuthorizeView>
+    <Authorized>
+        <MudStack Class="my-8 d-flex justify-center align-center">
+            <MudCard Style="align-items:center; color:white; background-color:#08bcd4;" Elevation="5">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudIcon Icon="@Icons.Material.Filled.PersonPin" Size="Size.Large"/>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudMenuItem>@context.User.Identity.Name</MudMenuItem>
+                        @if (user != null)
+                        {
+                            <MudText>Nume: @user.LastName</MudText>
+                            <MudText>Prenume: @user.FirstName</MudText>
+                            <MudText>Telfon: @user.Phone</MudText>
+                        }
+                    </CardHeaderContent>
+                </MudCardHeader>
+            </MudCard>
+        </MudStack>
+    </Authorized>
+</AuthorizeView>
+<MudStack Row>
+    <MudSpacer/>
+    <MudFab Class="my-8 rounded-pill" Color="Color.Primary" Label="Change password" Href="/ChangePassword"></MudFab>
+    <MudSpacer/>
+</MudStack>
+<MudStack Row>
+    <MudSpacer />
+
+    <MudFab Class="rounded-pill" Color="Color.Primary" OnClick="@(async () => await AuthService.Logout())" Label="Logout"></MudFab>
+
+    <MudSpacer />
+</MudStack>
+@code {
+    UserDto user;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+		user = await localStorageService.GetItemAsync<UserDto>("token");
+	  	StateHasChanged();
+	  }
+    }
+}

@@ -1,0 +1,157 @@
+﻿<InputFile OnChange="OnInputFileChange" accept="@FileTypes" multiple
+           id="filePicker" style="visibility:hidden;" />
+
+<MudCard Elevation="5">
+    @if (Files.Count > 0)
+    {
+        <MudCardHeader>
+            <CardHeaderActions>
+                <MudButton OnClick="@(async () => await UploadAll())" Disabled="ShowUploadAll()"
+                       Color="Color.Tertiary" StartIcon="@Icons.Outlined.Upload">
+                    Upload All
+                </MudButton>
+
+                <MudButton OnClick="@(() => RemoveAll())"
+                       Color="Color.Secondary" StartIcon="@Icons.Filled.Cancel">
+                    Remove All
+                </MudButton>
+            </CardHeaderActions>
+
+            <CardHeaderContent>
+                <MudStack Row="true">
+                    @if (IsSelectDisabled())
+                    {
+                        <MudButton Color="Color.Success" Variant="Variant.Filled" Style="pointer-events: none;" Disabled="true">
+                            Select files
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <label for="filePicker">
+                            <MudButton Color="Color.Success" Variant="Variant.Filled" Style="pointer-events: none;">
+                                Select files
+                            </MudButton>
+                        </label>
+                    }
+
+                    <MudStack>
+                        <MudProgressLinear Value="mainProgress" Color="Color.Tertiary"
+                                           Rounded="true" Size="Size.Medium" />
+
+                        <MudStack Row="true" Spacing="10">
+                            <MudText><b>Files:</b> @Files.Count out of @MaxFiles</MudText>
+
+                            <MudDivider Vertical="true" />
+
+                            <MudText><b>Uploaded:</b> @filesUploaded out of @Files.Count</MudText>
+                        </MudStack>
+                    </MudStack>
+                </MudStack>
+            </CardHeaderContent>
+        </MudCardHeader>
+    }
+
+    <MudCardContent>
+        @if (Files.Count > 0)
+        {
+            <MudTable Items="Files" Loading="isLoading" FixedHeader="true"
+                  Dense="true" Height="400px" Elevation="0">
+                <ColGroup>
+                    <col style="width: 60px;" />
+                    <col />
+                    <col style="width: 120px;" />
+                    <col style="width: 150px;" />
+                </ColGroup>
+
+                <HeaderContent>
+                    <MudTh Style="text-align: center;">Icon</MudTh>
+                    <MudTh>Name/Status</MudTh>
+                    <MudTh Style="text-align: center;">Size</MudTh>
+                    <MudTh Style="text-align: center;">Actions</MudTh>
+                </HeaderContent>
+
+                <RowTemplate>
+                    <MudTd DataLabel="Icon" Style="text-align: center;">
+                        <MudBadge Content="@context.File.ContentType" Overlap="true" Bordered="true"
+                              Origin="Origin.CenterCenter" Color="GetColor(context.Status)">
+                            <MudIcon Icon="@Icons.Material.Outlined.InsertDriveFile" Color="GetColor(context.Status)" Size="Size.Large" />
+                        </MudBadge>
+                    </MudTd>
+
+                    <MudTd>
+                        <MudGrid Spacing="0">
+                            <MudItem xs="12" lg="12">
+                                <MudText>@context.File.Name</MudText>
+                            </MudItem>
+
+                            <MudItem xs="12" lg="12">
+                                @if (context.Status == FileStatus.Uploading)
+                                {
+                                    <MudProgressLinear Color="Color.Success" Indeterminate="true" Rounded="true" Size="Size.Small" />
+                                }
+                                else
+                                {
+                                    <MudText Color="GetColor(context.Status)">@context.Message</MudText>
+                                }
+                            </MudItem>
+                        </MudGrid>
+                    </MudTd>
+
+                    <MudTd DataLabel="Size" Style="text-align: center;">
+                        @GetSizeText(context.File.Size)
+                    </MudTd>
+
+                    <MudTd DataLabel="Actions" Style="text-align: center;">
+                        @if (context.Status == FileStatus.Loaded || context.Status == FileStatus.Error)
+                        {
+                            <MudIconButton OnClick="@(async () => await UploadOne(context))" Disabled="isUploadDisabled(context)"
+                                   Icon="@Icons.Material.Outlined.Upload" Color="Color.Tertiary" />
+                            <MudIconButton OnClick="@(() => RemoveOne(context))"
+                                   Icon="@Icons.Material.Filled.Cancel" Color="Color.Secondary" />
+                        }
+                        else
+                        {
+                            <MudIconButton OnClick="@(() => DeleteOne(context))"
+                                   Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
+                        }
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+        else
+        {
+            <MudGrid Justify="Justify.Center" Spacing="1">
+                <MudItem>
+                    <MudText>
+                        No files uploaded
+                    </MudText>
+                </MudItem>
+
+                <MudItem xs="12" lg="12" />
+
+                <MudItem>
+                    <label for="filePicker">
+                        <MudButton Color="Color.Success" Variant="Variant.Filled" Style="pointer-events: none;">
+                            Select a file
+                        </MudButton>
+                    </label>
+                </MudItem>
+
+                <MudItem xs="12" lg="12">
+                    <MudDivider DividerType="DividerType.FullWidth"/>
+                </MudItem>
+
+                <MudItem xs="12" lg="12">
+                    <MudText>
+                        Marimea maxima a fisierelor este de
+                        <MudElement Style="color: #ff1a40;"> 5 MB</MudElement>
+                    </MudText>
+                    <MudText>
+                        Numarul maxim de fisiere selectate este
+                        <MudElement Style="color: #ff1a40;"> 100</MudElement>
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudCardContent>
+</MudCard>

@@ -1,0 +1,84 @@
+﻿@page "/Register"
+@inject IAuthService AuthService
+@inject NavigationManager Nav
+@inject ISnackbar snackBar
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+    <div class="d-flex justify-center">
+         <MudImage Src="images\logo.png" ObjectFit="@ImageFit" Height="300" Width="300"/>
+    </div>
+    
+    <MudGrid>
+        <MudSpacer />
+        <MudItem xs="12" sm="3">
+            <MudCard Elevation="5">
+                <MudCardContent>
+                    <MudText Typo="Typo.h5" Align="Align.Center">Register</MudText>
+                    <MudTextField Label="Email"
+                                  @bind-Value="model.Email" For="@(() => model.Email)" InputType="InputType.Email"/>
+                    <MudTextField Label="Nume"
+                                  @bind-Value="model.LastName" For="@(() => model.LastName)" />
+                    <MudTextField Label="Prenume"
+                                  @bind-Value="model.FirstName" For="@(() => model.FirstName)" />
+                    <MudTextField Label="Telefon"
+                                  @bind-Value="model.Phone" For="@(() => model.Phone)" />
+                    <MudTextField Label="Password" Class="mt-3"
+                                  @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                    <MudTextField Label="Confirm Password" Class="mt-3"
+                                  @bind-Value="model.ConfirmPassword" For="@(() => model.ConfirmPassword)" InputType="InputType.Password" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="isLoading"
+                               Variant="Variant.Outlined" Color="Color.Primary" Class="ml-auto">
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                            <MudText>Registering</MudText>
+                        }else
+                        {
+                            <MudText>Register</MudText>
+                        }
+                    </MudButton>
+                    <MudSpacer />
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudSpacer />
+    </MudGrid>
+</EditForm>
+
+<MudStack Row Class="my-4">
+    <MudSpacer />
+    <MudIcon Icon="@Icons.Material.Filled.HorizontalRule" Color="Color.Primary" Size="Size.Large" />
+    <MudText Typo="Typo.subtitle1" Class="my-1">OR</MudText>
+    <MudIcon Icon="@Icons.Material.Filled.HorizontalRule" Color="Color.Primary" Size="Size.Large" />
+    <MudSpacer />
+</MudStack>
+
+
+<MudText Align="Align.Center">Already have an account?<MudLink Href="/Login">Login</MudLink></MudText>
+
+
+@code {
+    RegisterDto model = new();
+    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+    ObjectFit ImageFit = ObjectFit.ScaleDown;
+    bool isLoading;
+
+    async Task OnValidSubmit()
+    {
+        isLoading = true;
+
+        CustomResponse<bool> response = await AuthService.RegisterAsync(model);
+        if (response.IsSuccessful)
+        {
+            Nav.NavigateTo("login", false);
+        }
+        else
+            snackBar.Add(response.Message, Severity.Error);
+
+        isLoading = false;
+    }
+}

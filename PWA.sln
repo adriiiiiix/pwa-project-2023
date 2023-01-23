@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PWA", "PWA\PWA.csproj", "{DBFB1CC8-8370-47B0-892C-BD16EF69C6CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PWA.Shared", "PWA.Shared\PWA.Shared.csproj", "{A3D2FA8A-37AF-4117-8CD4-6EE9FDCD5946}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PWA.Api", "PWA.Api\PWA.Api.csproj", "{B92AA5C2-6866-4600-8432-E0087C06EA03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBFB1CC8-8370-47B0-892C-BD16EF69C6CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBFB1CC8-8370-47B0-892C-BD16EF69C6CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBFB1CC8-8370-47B0-892C-BD16EF69C6CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBFB1CC8-8370-47B0-892C-BD16EF69C6CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D2FA8A-37AF-4117-8CD4-6EE9FDCD5946}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D2FA8A-37AF-4117-8CD4-6EE9FDCD5946}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D2FA8A-37AF-4117-8CD4-6EE9FDCD5946}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D2FA8A-37AF-4117-8CD4-6EE9FDCD5946}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B92AA5C2-6866-4600-8432-E0087C06EA03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B92AA5C2-6866-4600-8432-E0087C06EA03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B92AA5C2-6866-4600-8432-E0087C06EA03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B92AA5C2-6866-4600-8432-E0087C06EA03}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2758D1EA-BA8C-44C7-BAB0-9A3CAD21F0A2}
+	EndGlobalSection
+EndGlobal

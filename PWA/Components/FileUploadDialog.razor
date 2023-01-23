@@ -1,0 +1,24 @@
+﻿<MudDialog>
+    <DialogContent>
+        <FileUploadComponent @ref="fileUploadComponent" MaxFiles="10" MaxSize="5000000" FileTypes=".jpeg, .jpg, .png" CanSelect="@((value) => canSelect = value)"/>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Error">Cancel</MudButton>
+        <MudButton OnClick="Select" Color="Color.Success" Variant="Variant.Filled" Disabled="!canSelect">
+            Confirma
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance Dialog { get; set; }
+
+    FileUploadComponent? fileUploadComponent;
+    bool canSelect;
+
+    void Select() => Dialog.Close(DialogResult.Ok(fileUploadComponent?.GetCurrentFiles()));
+
+    void Cancel() => Dialog.Cancel();
+}

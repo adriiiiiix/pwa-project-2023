@@ -1,0 +1,120 @@
+﻿@page "/AddressForm"
+@inject CladiriService CladiriService
+@inject ISnackbar Snackbar
+@using Newtonsoft.Json.Linq
+
+<MudText Style="font-size:x-large; font-weight:700; font-family:sans-serif;" Color="Color.Primary" Align="Align.Center">Adaugare adresa</MudText>
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudSelect T="string" Label="Tip strada" AnchorOrigin="Origin.BottomCenter" Class="mt-3"
+                               @bind-Value="model.Tip_Strada" For="@(() => model.Tip_Strada)">
+                        <MudSelectItem Value="@("Strada")" />
+                        <MudSelectItem Value="@("Bulevardul")" />
+                        <MudSelectItem Value="@("Calea")" />
+                        <MudSelectItem Value="@("Soseaua")" />
+                        <MudSelectItem Value="@("Aleea")" />
+                        <MudSelectItem Value="@("Intrarea")" />
+                    </MudSelect>
+
+                    <MudTextField Label="Denumire strada"
+                                  @bind-Value="model.Denumire_Strada" For="@(() => model.Denumire_Strada)" />
+                    <MudTextField Label="Numarul"
+                                  @bind-Value="model.Numar" For="@(() => model.Numar)" />
+
+                    <MudTextField Label="Bloc" HelperText="(Optional)"
+                                  @bind-Value="model.Bloc" For="@(() => model.Bloc)" />                  
+                    <MudTextField Label="Scara" Class="mt-3" HelperText="(Optional)"
+                                  @bind-Value="model.Scara" For="@(() => model.Scara)" />
+
+                    <MudSelect T="string" Label="Stadiul blocului" AnchorOrigin="Origin.BottomCenter" Class="mt-3"
+                               @bind-Value="model.Stadiul_Blocului" For="@(() => model.Stadiul_Blocului)">
+                        <MudSelectItem Value="@("FINALIZAT")" />
+                        <MudSelectItem Value="@("IN EXECUTIE")" />
+                    </MudSelect>
+
+                    <MudTextField Label="Anul constructiei" Class="mt-3"
+                                  @bind-Value="model.Anul_Construirii" For="@(() => model.Anul_Construirii)" />
+
+                    <MudTextField Label="Regim de inaltime (S+P+M)" HelperText="(Optional)" Class="mt-3"
+                                  @bind-Value="model.Regim_Inaltime" For="@(() => model.Regim_Inaltime)" />
+                    <MudTextField Label="Sistemul constructiv" HelperText="(Optional)" Class="mt-3"
+                                  @bind-Value="model.Sistemul_constructiv" For="@(() => model.Sistemul_constructiv)" />
+                    <MudTextField Label="Numar apartamente" Class="mt-3"
+                                  @bind-Value="model.Numar_apartamente" For="@(() => model.Numar_apartamente)" />
+
+
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto rounded-pill">Register</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="5">
+            <MudPaper Class="pa-4 mud-height-full">
+                <div id="map" style="height: 600px;"></div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+    private string address;
+
+    protected override void OnAfterRender(bool firstrender)
+    {
+        JSRuntime.InvokeAsync<bool>("initMap", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public void UpdateInput(String address)
+    {
+        var addressObj = JObject.Parse(address);
+        var strada = (string)addressObj["components"]["road"];
+        var numar = (string)addressObj["components"]["house_number"];
+
+        var tipStrada = strada.Split(" ")[0];
+        strada = strada[(strada.Split()[0].Length + 1)..];
+
+        model.Tip_Strada = tipStrada;
+        model.Denumire_Strada = strada;
+        model.Numar = numar;
+
+        model.Longitudine = (float) addressObj["geometry"]["lng"];
+        model.Latitudine = (float) addressObj["geometry"]["lat"];
+
+        StateHasChanged();
+    }
+}
+
+@code {
+    CladireDto model = new();
+    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
+    bool success;
+    bool isLoading;
+
+    async Task OnValidSubmit()
+    {
+        isLoading = true;
+
+        CustomResponse<CladireDto> response = await CladiriService.InsertCladireAsync(model);
+
+        if (response.IsSuccessful)
+        {
+            Snackbar.Add("Cladire adaugata cu succes", Severity.Success);           
+        }
+        else Snackbar.Add(response.Message, Severity.Error);
+        model = new();
+
+        isLoading = false;
+        
+    }
+
+}
